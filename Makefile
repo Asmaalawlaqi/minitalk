@@ -1,36 +1,29 @@
-NAME = server
-NAME1 = client
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
+SERVER = server
+CLIENT = client
+CFLAGS = -Wall -Werror -Wextra
+CC = gcc
 PRINTF = ft_printf
-SRCS_SERVER = server.c
-SRCS_CLIENT = client.c
-OBJS_SERVER = $(SRCS_SERVER:.c=.o)
-OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
+FLAGS = -Wall -Wextra -Werror -I$(PRINTF)/headers
 
-$(NAME): $(OBJS_SERVER) $(PRINTF)/libftprintf.a
-	@$(CC) $(CFLAGS) $(OBJS_SERVER) -o $(NAME) -L$(PRINTF) -lftprintf
+all: $(SERVER) $(CLIENT)
 
-$(NAME1): $(OBJS_CLIENT) $(PRINTF)/libftprintf.a
-	@$(CC) $(CFLAGS) $(OBJS_CLIENT) -o $(NAME1) -L$(PRINTF) -lftprintf
+$(SERVER): server.c $(PRINTF)/libftprintf.a
+	@$(CC) $(CFLAGS) -o $(SERVER) server.c -L$(PRINTF) -lftprintf
+	@echo "Server is Ready!"
+
+$(CLIENT): client.c $(PRINTF)/libftprintf.a
+	@$(CC) $(CFLAGS) -o $(CLIENT) client.c -L$(PRINTF) -lftprintf
+	@echo "Client is Ready!"
 
 $(PRINTF)/libftprintf.a:
-	@$(MAKE) -C $(PRINTF)
-
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
-
-all: $(NAME) $(NAME1)
-	@echo "Server And Client Are Ready!"
+	@make -s -C $(PRINTF)
 
 clean:
-	@rm -f $(OBJS_SERVER) $(OBJS_CLIENT)
-	@$(MAKE) -C $(PRINTF) clean
+	@make -s -C $(PRINTF) clean
 
 fclean: clean
-	@rm -f $(NAME) $(NAME1)
-	@$(MAKE) -C $(PRINTF) fclean
+	@make -s -C $(PRINTF) fclean
+	@rm -f $(SERVER) $(CLIENT)
 	@echo "Server and Client Have Been Cleaned Successfully"
-
 
 re: fclean all
