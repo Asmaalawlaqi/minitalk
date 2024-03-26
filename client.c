@@ -5,67 +5,55 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asmalawl <asmalawl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/22 14:31:57 by asmalawl          #+#    #+#             */
-/*   Updated: 2024/03/26 10:16:44 by asmalawl         ###   ########.fr       */
+/*   Created: 2024/01/23 15:21:10 by asmalawl          #+#    #+#             */
+/*   Updated: 2024/03/26 11:12:36 by asmalawl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "ft_printf/ft_printf.h"
 
-void	read_binary_form(int pid, char message)
-{
-	int	bits;
-
-	bits = 0;
-	while (bits < 8)
-	{
-		if (message & (1 << bits))
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		usleep(400);
-		bits++;
-	}
-}
-
-void	send_message(int pid, char *message)
+void	send_m(char *m, int pid)
 {
 	int	i;
+	int	x;
+	int	shift;
 
 	i = 0;
-	while (message[i] != '\0')
+	while (m[i] != '\0')
 	{
-		read_binary_form(pid, message[i]);
+		x = m[i];
+		shift = 0;
+		while (shift < 8)
+		{
+			if ((x >> shift) & 1)
+				kill(pid, SIGUSR2);
+			else
+				kill(pid, SIGUSR1);
+			usleep(350);
+			shift++;
+		}
 		i++;
 	}
-	read_binary_form(pid, '\n');
 }
 
-int	main(int argc, char **argv)
+int	main(int ac, char **av)
 {
-	int	i;
-	int	server_pid;
+	int		pid;
+	char	*m;
 
-	i = 0;
-	if (argc == 3)
+	if (ac != 3)
 	{
-		while (argv[1][i] != '\0')
-		{
-			if (!ft_isdigit(argv[1][i++]) || ft_strlen(argv[1]) > 31)
-			{
-				write(1, "Invalid PID\n", 12);
-				exit(0);
-			}
-			else if (argv[1][i] < '0' || (argv[1][i] >= 'a'
-						&& argv[1][i] <= 'z') || (argv[1][i] >= 'A'
-						&& argv[1][i] <= 'Z'))
-				exit(0);
-			i++;
-		}
-		server_pid = ft_atoi(argv[1]);
-		send_message(server_pid, argv[2]);
-		if (argv[1][i] == '\0')
-			write(1, &argv[2], 1);
+		ft_printf("invalid parameter\n", av[0]);
 		return (0);
 	}
+	pid = atoi(av[1]);
+	if (pid <= 0)
+	{
+		ft_printf("invalid pid\n");
+		exit(0);
+	}
+	m = av[2];
+	send_m(m, pid);
+	send_m("\n", pid);
+	exit(0);
 }

@@ -1,38 +1,52 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   ft_printf_decimals.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asmalawl <asmalawl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/23 15:20:26 by asmalawl          #+#    #+#             */
-/*   Updated: 2024/03/26 10:55:05 by asmalawl         ###   ########.fr       */
+/*   Created: 2023/12/12 11:49:12 by asmalawl          #+#    #+#             */
+/*   Updated: 2023/12/26 11:57:03 by asmalawl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf/ft_printf.h"
+#include "ft_printf.h"
 
-void	the_server(int sig)
+int	decimal(int d)
 {
-	static int	i;
-	static char	c;
+	int	i;
+	int	j;
 
-	c = c + ((sig & 1) << i);
-	i++;
-	if (i == 8)
+	i = 0;
+	ft_putnbr(d);
+	if (d == 0)
+		return (1);
+	if (d < 0)
 	{
-		write(1, &c, 1);
-		c = 0;
-		i = 0;
+		d = -d;
+		i++;
 	}
+	j = d;
+	while (j != 0)
+	{
+		j = j / 10;
+		i++;
+	}
+	return (i);
 }
 
-int	main(void)
+int	unsigneddecimal(unsigned int d)
 {
-	ft_printf("Server PID: %d\n", getpid());
-	signal(SIGUSR1, the_server);
-	signal(SIGUSR2, the_server);
-	while (1)
-		pause();
-	return (0);
+	int	i;
+
+	i = 0;
+	ft_putnbrunsigned(d);
+	if (d == 0)
+		return (1);
+	while (d != 0)
+	{
+		d = d / 10;
+		i++;
+	}
+	return (i);
 }

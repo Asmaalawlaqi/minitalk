@@ -1,38 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   ft_printf_string.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asmalawl <asmalawl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/23 15:20:26 by asmalawl          #+#    #+#             */
-/*   Updated: 2024/03/26 10:55:05 by asmalawl         ###   ########.fr       */
+/*   Created: 2023/12/11 13:12:15 by asmalawl          #+#    #+#             */
+/*   Updated: 2023/12/12 11:46:29 by asmalawl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf/ft_printf.h"
+#include "ft_printf.h"
 
-void	the_server(int sig)
+int	string(char *str)
 {
-	static int	i;
-	static char	c;
-
-	c = c + ((sig & 1) << i);
-	i++;
-	if (i == 8)
+	if (!str)
 	{
-		write(1, &c, 1);
-		c = 0;
-		i = 0;
+		ft_putstr("(null)");
+		return (6);
 	}
-}
-
-int	main(void)
-{
-	ft_printf("Server PID: %d\n", getpid());
-	signal(SIGUSR1, the_server);
-	signal(SIGUSR2, the_server);
-	while (1)
-		pause();
-	return (0);
+	ft_putstr(str);
+	return (ft_strlen(str));
 }
