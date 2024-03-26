@@ -5,34 +5,37 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asmalawl <asmalawl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/23 15:20:26 by asmalawl          #+#    #+#             */
-/*   Updated: 2024/01/23 15:20:57 by asmalawl         ###   ########.fr       */
+/*   Created: 2024/01/18 13:13:48 by asmalawl          #+#    #+#             */
+/*   Updated: 2024/01/23 12:23:47 by asmalawl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf/ft_printf.h"
+#include "minitalk.h"
 
-void	the_server(int sig)
+void	signal_received(int signal_pid)
 {
-	static int	i;
-	static char	c;
+	static int	collected_bits;
+	static int	received_bits;
 
-	c = c + ((sig & 1) << i);
-	i++;
-	if (i == 8)
+	if (signal_pid == SIGUSR1)
+		collected_bits = collected_bits | (1 << received_bits);
+	received_bits++;
+	if (received_bits == 8)
 	{
-		write(1, &c, 1);
-		c = 0;
-		i = 0;
+		write(1, &collected_bits, 1);
+		received_bits = 0;
+		collected_bits = 0;
 	}
 }
 
 int	main(void)
 {
-	ft_printf("Server PID: %d\n", getpid());
-	signal(SIGUSR1, the_server);
-	signal(SIGUSR2, the_server);
+	write(1, "server PID : ", 14);
+	ft_putnbr(getpid());
+	write(1, "\n", 1);
+	signal(SIGUSR1, signal_received);
+	signal(SIGUSR2, signal_received);
 	while (1)
 		pause();
-	return (0);
+	write(1, "\n", 1);
 }
